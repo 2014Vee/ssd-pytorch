@@ -1,0 +1,18 @@
+blog：https://blog.csdn.net/dingkm666/article/details/88775428
+修改错误的https://blog.csdn.net/lianggyu/article/details/100076153
+修改1：config.py num_classes
+修改2：VOC0712.py 改成自己的类别
+修改3：train.py
+	--预训练模型
+	--批量数据处理
+	--迭代起始点
+	--学习率
+	--学习保存地址
+	--迭代多少次保存一次模型
+	--保存模型的名字
+修改4：eval.py
+	--评估模型的路径
+	--评估保存路径
+修改5：ssd.py
+	--选择voc数据参数self.cfg=(coco,voc)[num_classes==8]
+
