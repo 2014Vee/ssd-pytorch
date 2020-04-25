@@ -14,7 +14,7 @@ import torch.utils.data as data
 import argparse
 import visdom as viz
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"  # 指定GPU做训练
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"  # 指定GPU做训练
 
 
 def str2bool(v):
@@ -28,13 +28,13 @@ parser.add_argument('--dataset', default='VOC', choices=['VOC', 'COCO'],
                     type=str, help='VOC or COCO')
 parser.add_argument('--dataset_root', default="data/VOCdevkit/",   # 修改【dataset_root】
                     help='Dataset root directory path')
-parser.add_argument('--basenet', default='weights/vgg16_reducedfc.pth',  # 【预训练好的权重系数】
+parser.add_argument('--basenet', default='vgg16_reducedfc.pth',  # 【预训练好的权重系数】
                     help='Pretrained base model')
-parser.add_argument('--batch_size', default=16, type=int,  # 【修改batch_size】
+parser.add_argument('--batch_size', default=4, type=int,  # 【修改batch_size】
                     help='Batch size for training')
-parser.add_argument('--resume', default='weights/ssd300_VOC_500.pth', type=str,  # 【是否从某节点开始训练】没有就是None
+parser.add_argument('--resume', default=None, type=str,  # 【是否从某节点开始训练】没有就是None
                     help='Checkpoint state_dict file to resume training from')
-parser.add_argument('--start_iter', default=501, type=int,
+parser.add_argument('--start_iter', default=0, type=int,
                     help='Resume training at this iter')
 parser.add_argument('--num_workers', default=2, type=int,  # 【num_workers】
                     help='Number of workers used in dataloading')
@@ -192,7 +192,7 @@ def train():
         if args.visdom:
             update_vis_plot(iteration, loss_l.data, loss_c.data, iter_plot, epoch_plot, 'append')
 
-        if iteration != 0 and iteration % 2000 == 0:
+        if iteration != 0 and iteration % 10000 == 0:
             # 迭代多少次保存一次模型。 在尝试阶段，为了节省时间，建议将根据迭代次数保存模型的参数调低，例如调节到500
             print('Saving state, iter:', iteration) # 保存的checkpoint
             torch.save(ssd_net.state_dict(), 'weights/ssd300_VOC_' + repr(iteration) + '.pth')  # 保存模型的路径

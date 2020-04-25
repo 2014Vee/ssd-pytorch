@@ -15,7 +15,7 @@ import torch.utils.data as data
 from ssd import build_ssd
 
 parser = argparse.ArgumentParser(description='Single Shot MultiBox Detection')
-parser.add_argument('--trained_model', default='weights/ssd300_VOC_110000.pth',  # #########修改检测模型的路径
+parser.add_argument('--trained_model', default='weights/ssd300_VOC_10000.pth',  # #########修改检测模型的路径
                     type=str, help='Trained state_dict file path to open')
 parser.add_argument('--save_folder', default='eval/', type=str,
                     help='Dir to save results')

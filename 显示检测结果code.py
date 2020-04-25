@@ -19,7 +19,7 @@ with open('D:/Deep_learning/ssd.pytorch-master/eval/test1.txt','r') as f:
     f.close()
 for i in match.keys():  
     #print('D:/Deep_learning/ssd.pytorch-master/data/VOCdevkit/VOC2007/ground_truth/'+i+'.jpg.jpg')
-    img=cv2.imread('D:/Deep_learning/ssd.pytorch-master/data/VOCdevkit/VOC2007/ground_truth/'+i+'.jpg.jpg')
+    img=cv2.imread('/data/lp/project/ssd.pytorch/data/VOCdevkit/VOC2007/ground_truth/'+i+'.jpg.jpg')
     #print(match[i],'每一幅图的框个数： ',len(match[i]))
     for num in range(len(match[i])):
         x1=int(match[i][num][0])
@@ -27,4 +27,4 @@ for i in match.keys():
         x2=int(match[i][num][2])
         y2=int(match[i][num][3])
         cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), thickness=2)
-    cv2.imwrite("D:/Deep_learning/ssd.pytorch-master/data/VOCdevkit/VOC2007/PREDECTION/"+i+'.jpg.jpg', img)    
+    cv2.imwrite("/data/lp/project/ssd.pytorch/data/VOCdevkit/VOC2007/PREDECTION/"+i+'.jpg.jpg', img)
