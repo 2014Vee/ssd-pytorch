@@ -178,7 +178,7 @@ class VOCDetection(data.Dataset):
         """
         img_id = self.ids[index]
         anno = ET.parse(self._annopath % img_id).getroot()
-        gt = self.target_transform(anno, 1, 1)  # ##后面的1,1,貌似是对annotation中的位置的改变
+        gt = self.target_transform(anno, 1, 1)  # ##后面的1,1,就是上面实例化VOCAnno的后两个参数width和height，用于对标签进行归一化
         return img_id[1], gt  # 返回的是图片的名字（去后缀名），还有groundtruth [[xmin, ymin, xmax, ymax, label_ind], ... ]
 
     def pull_tensor(self, index):
