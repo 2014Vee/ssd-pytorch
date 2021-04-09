@@ -12,21 +12,17 @@ import torch
 import torch.utils.data as data
 import cv2
 import numpy as np
-if sys.version_info[0] == 2:
+if sys.version_info[0] == 2: # 查看python主版本号
     import xml.etree.cElementTree as ET
 else:
     import xml.etree.ElementTree as ET
 
 VOC_CLASSES = (  # always index 0
-    'aeroplane', 'bicycle', 'bird', 'boat',
-    'bottle', 'bus', 'car', 'cat', 'chair',
-    'cow', 'diningtable', 'dog', 'horse',
-    'motorbike', 'person', 'pottedplant',
-    'sheep', 'sofa', 'train', 'tvmonitor')
+    'island',)
 
 # note: if you used our download scripts, this should be right
-VOC_ROOT = osp.join(HOME, "data/VOCdevkit/")
-
+# VOC_ROOT = osp.join(HOME, "data/VOCdevkit/")
+VOC_ROOT = "/usr/idip/idip/liuping/dataset/VOCdevkit/" # 自己设置路径
 
 class VOCAnnotationTransform(object):
     """Transforms a VOC annotation into a Tensor of bbox coords and label index
@@ -43,7 +39,7 @@ class VOCAnnotationTransform(object):
 
     def __init__(self, class_to_ind=None, keep_difficult=False):
         self.class_to_ind = class_to_ind or dict(
-            zip(VOC_CLASSES, range(len(VOC_CLASSES))))
+            zip(VOC_CLASSES, range(len(VOC_CLASSES)))) # python3的特性，zip不再直接返回具体的对象，如果需要展示则需要dict()或者list()
         self.keep_difficult = keep_difficult
 
     def __call__(self, target, width, height):
@@ -95,8 +91,9 @@ class VOCDetection(data.Dataset):
     """
 
     def __init__(self, root,
-                 image_sets=[('2007', 'trainval'), ('2012', 'trainval')],
-                 transform=None, target_transform=VOCAnnotationTransform(),
+                 image_sets=[('2007', 'train')],  # ('2012', 'trainval') 这里选用的VOC2007，这里可以进行改动选则对应的数据集
+                 transform=None,
+                 target_transform=VOCAnnotationTransform(),
                  dataset_name='VOC0712'):
         self.root = root
         self.image_set = image_sets
@@ -122,7 +119,7 @@ class VOCDetection(data.Dataset):
     def pull_item(self, index):
         img_id = self.ids[index]
 
-        target = ET.parse(self._annopath % img_id).getroot()
+        target = ET.parse(self._annopath % img_id).getroot() # 补充前面缺少的两个字符
         img = cv2.imread(self._imgpath % img_id)
         height, width, channels = img.shape
 
@@ -133,7 +130,7 @@ class VOCDetection(data.Dataset):
             target = np.array(target)
             img, boxes, labels = self.transform(img, target[:, :4], target[:, 4])
             # to rgb
-            img = img[:, :, (2, 1, 0)]
+            img = img[:, :, (2, 1, 0)] # opencv读入图像的顺序是BGR，该操作直接转换为RGB
             # img = img.transpose(2, 0, 1)
             target = np.hstack((boxes, np.expand_dims(labels, axis=1)))
         return torch.from_numpy(img).permute(2, 0, 1), target, height, width
@@ -151,7 +148,7 @@ class VOCDetection(data.Dataset):
             PIL img
         '''
         img_id = self.ids[index]
-        return cv2.imread(self._imgpath % img_id, cv2.IMREAD_COLOR)
+        return cv2.imread(self._imgpath % img_id, cv2.IMREAD_COLOR) # 直接从原始路径抓取图片
 
     def pull_anno(self, index):
         '''Returns the original annotation of image at index
@@ -167,7 +164,7 @@ class VOCDetection(data.Dataset):
         '''
         img_id = self.ids[index]
         anno = ET.parse(self._annopath % img_id).getroot()
-        gt = self.target_transform(anno, 1, 1)
+        gt = self.target_transform(anno, 1, 1) # 这里的1，1就是上面实例化 VOCAnnotationTransform 中的call中的width和height，主要是用于归一化标签的
         return img_id[1], gt
 
     def pull_tensor(self, index):
